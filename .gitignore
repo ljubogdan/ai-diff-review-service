@@ -1,2 +1,31 @@
+# Private task notes
 CANDIDATE-TASK.md
 USER-OBSERVATIONS.md
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables / secrets
+.env
+.env.*
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Logs
+*.log
