@@ -2,8 +2,10 @@ import asyncio
 import json
 
 import httpx
+import pytest
 
 from app.config import Settings
+from app.providers.base import ProviderError
 from app.providers.llm import LLMProvider
 from app.services.diff_parser import parse_unified_diff
 
@@ -17,10 +19,9 @@ def test_llm_provider_uses_gemini_generate_content_and_validates_grounding() -> 
         assert request.headers["x-goog-api-key"] == "secret-key"
         body = json.loads(request.content)
         assert "untrusted inert data" in body["systemInstruction"]["parts"][0]["text"]
-        assert body["generationConfig"]["responseFormat"]["text"]["mimeType"] == "application/json"
-        assert body["generationConfig"]["responseFormat"]["text"]["schema"]["required"] == [
-            "findings"
-        ]
+        assert body["generationConfig"]["responseMimeType"] == "application/json"
+        assert body["generationConfig"]["responseJsonSchema"]["required"] == ["findings"]
+        assert "responseFormat" not in body["generationConfig"]
         output = {
             "findings": [
                 {
@@ -77,11 +78,7 @@ def test_gemini_http_failure_is_a_provider_error() -> None:
             Settings(gemini_api_key="secret-key", gemini_model="gemini-test"),
             transport=httpx.MockTransport(handler),
         )
-        try:
+        with pytest.raises(ProviderError, match="HTTP 429: quota exhausted"):
             await provider.analyze(parse_unified_diff(DIFF))
-        except Exception as exc:
-            assert "Gemini provider unavailable" in str(exc)
-        else:
-            raise AssertionError("Provider failure was not propagated")
 
     asyncio.run(scenario())

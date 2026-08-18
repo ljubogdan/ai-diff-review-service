@@ -51,6 +51,19 @@ def _response_text(payload: dict[str, Any]) -> str:
     return text
 
 
+def _raise_for_api_error(response: httpx.Response) -> None:
+    if response.is_success:
+        return
+    message = "request rejected"
+    try:
+        candidate = response.json().get("error", {}).get("message")
+        if isinstance(candidate, str) and candidate.strip():
+            message = " ".join(candidate.split())[:300]
+    except (TypeError, ValueError):
+        pass
+    raise ProviderError(f"Gemini API returned HTTP {response.status_code}: {message}")
+
+
 class LLMProvider(ReviewProvider):
     def __init__(
         self,
@@ -86,12 +99,8 @@ class LLMProvider(ReviewProvider):
                 }
             ],
             "generationConfig": {
-                "responseFormat": {
-                    "text": {
-                        "mimeType": "application/json",
-                        "schema": _OUTPUT_SCHEMA,
-                    }
-                }
+                "responseMimeType": "application/json",
+                "responseJsonSchema": _OUTPUT_SCHEMA,
             },
         }
         try:
@@ -108,7 +117,7 @@ class LLMProvider(ReviewProvider):
                     },
                     json=request_body,
                 )
-            response.raise_for_status()
+            _raise_for_api_error(response)
             raw_findings = json.loads(_response_text(response.json()))["findings"]
         except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
             raise ProviderError(
