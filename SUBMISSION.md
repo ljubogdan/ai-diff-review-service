@@ -15,11 +15,11 @@
 
 ## Verification
 
-The pytest suite exercises every mock rule, new-file line numbers, multi-file chunk boundaries, ordering/deduplication, truncation, public/private auth, all specified errors, idempotency conflicts, cache hits, SSE replay, 30-request rate-limit burst, four concurrent jobs with a queued fifth, and graceful unconfigured LLM behavior. The LLM request/structured-response path is tested through an in-process mock transport without exposing credentials.
+The pytest suite exercises every mock rule, new-file line numbers, multi-file chunk boundaries, ordering/deduplication, truncation, public/private auth, all specified errors, idempotency conflicts, cache hits, SSE replay, 30-request rate-limit burst, four concurrent jobs with a queued fifth, and graceful unconfigured LLM behavior. The LLM request/structured-response path is tested through an in-process mock transport without exposing credentials. A production smoke test also verified auth, mock lifecycle, SSE replay, caching, idempotency, and a successful Gemini review end to end.
 
 ## AI use and judgment
 
-OpenAI Codex was used to implement and test the service. I kept the suggested provider abstraction and event log. I rejected emitting mock findings immediately in raw scan order: the contract requires globally sorted findings across chunks, so the pipeline completes the scan, deduplicates and sorts, and only then records finding events.
+I used OpenAI Codex to implement and test the service, and ChatGPT as a technical reviewer for architecture, contract, deployment, and security decisions. I did not accept the assumption that Gemini was already the configured provider; I verified the code first and then made an explicit migration decision. I also did not treat the existing passing tests as sufficient: I requested a scoring-oriented audit and targeted tests for live SSE, deduplication, findings across chunk boundaries, and an oversized single-file diff. Finally, I rejected emitting mock findings immediately in raw scan order because the contract requires globally sorted findings across chunks, so the pipeline completes the scan, deduplicates, sorts, and only then records finding events.
 
 ## With more time
 

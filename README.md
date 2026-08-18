@@ -32,7 +32,7 @@ curl -H 'Authorization: Bearer local-development-token' \
 
 - `BEARER_TOKEN` — required for authenticated routes; protected routes return `401` when unset.
 - `GEMINI_API_KEY` — server-side Gemini credential.
-- `GEMINI_MODEL` — Gemini model available to that credential; `gemini-2.5-flash-lite` is a suitable free-tier choice.
+- `GEMINI_MODEL` — Gemini model available to that credential; production uses `gemini-3.5-flash-lite`.
 - `GEMINI_BASE_URL` — optional API root, default `https://generativelanguage.googleapis.com/v1beta`.
 - `GEMINI_TIMEOUT_SECONDS` — optional per-request timeout, default `25`.
 
