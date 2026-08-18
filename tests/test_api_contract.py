@@ -144,7 +144,7 @@ async def test_llm_without_configuration_fails_gracefully(client: httpx.AsyncCli
     result = await wait_for_job(client, submitted.json()["jobId"])
     assert result["status"] == "failed"
     assert result["error"]["code"] == "internal"
-    assert "not configured" in result["error"]["message"]
+    assert result["error"]["message"] == "Gemini provider is not configured"
 
 
 async def test_chunk_usage_uses_file_boundaries(client: httpx.AsyncClient) -> None:

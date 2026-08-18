@@ -8,7 +8,7 @@
 - Files are grouped into chunks of at most 64 KiB without splitting a file.
 - Providers share one async interface and receive parsed file chunks.
 - `MockProvider` is deterministic and contains no model-dependent behavior.
-- `LLMProvider` uses structured Responses API output and validates grounding.
+- `LLMProvider` uses Gemini structured output and validates grounding.
 - In-memory storage owns jobs, events, idempotency keys, and cache sources.
 - An asyncio semaphore allows four processing jobs and queues further work.
 - Stored ordered events provide both live SSE delivery and identical replay.

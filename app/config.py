@@ -14,17 +14,19 @@ RATE_LIMIT_PER_MINUTE = 30
 @dataclass(frozen=True, slots=True)
 class Settings:
     bearer_token: str = ""
-    llm_api_key: str = ""
-    llm_base_url: str = "https://api.openai.com/v1"
-    llm_model: str = ""
-    llm_timeout_seconds: float = 25.0
+    gemini_api_key: str = ""
+    gemini_base_url: str = "https://generativelanguage.googleapis.com/v1beta"
+    gemini_model: str = ""
+    gemini_timeout_seconds: float = 25.0
 
     @classmethod
     def from_env(cls) -> "Settings":
         return cls(
             bearer_token=os.getenv("BEARER_TOKEN", ""),
-            llm_api_key=os.getenv("LLM_API_KEY", ""),
-            llm_base_url=os.getenv("LLM_BASE_URL", "https://api.openai.com/v1").rstrip("/"),
-            llm_model=os.getenv("LLM_MODEL", ""),
-            llm_timeout_seconds=float(os.getenv("LLM_TIMEOUT_SECONDS", "25")),
+            gemini_api_key=os.getenv("GEMINI_API_KEY", ""),
+            gemini_base_url=os.getenv(
+                "GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta"
+            ).rstrip("/"),
+            gemini_model=os.getenv("GEMINI_MODEL", ""),
+            gemini_timeout_seconds=float(os.getenv("GEMINI_TIMEOUT_SECONDS", "25")),
         )

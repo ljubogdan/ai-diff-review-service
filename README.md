@@ -1,6 +1,6 @@
 # AI Diff Review Service
 
-FastAPI service that accepts unified diffs, processes reviews asynchronously, and exposes polling and replayable SSE results. The deterministic `mock` provider implements the scoring contract; the `llm` provider uses an OpenAI-compatible Responses API.
+FastAPI service that accepts unified diffs, processes reviews asynchronously, and exposes polling and replayable SSE results. The deterministic `mock` provider implements the scoring contract; the `llm` provider uses the Google Gemini API.
 
 ## Local setup
 
@@ -31,12 +31,12 @@ curl -H 'Authorization: Bearer local-development-token' \
 ## Configuration
 
 - `BEARER_TOKEN` — required for authenticated routes; protected routes return `401` when unset.
-- `LLM_API_KEY` — server-side LLM credential.
-- `LLM_MODEL` — model available to that credential.
-- `LLM_BASE_URL` — optional API root, default `https://api.openai.com/v1`.
-- `LLM_TIMEOUT_SECONDS` — optional per-request timeout, default `25`.
+- `GEMINI_API_KEY` — server-side Gemini credential.
+- `GEMINI_MODEL` — Gemini model available to that credential; `gemini-2.5-flash-lite` is a suitable free-tier choice.
+- `GEMINI_BASE_URL` — optional API root, default `https://generativelanguage.googleapis.com/v1beta`.
+- `GEMINI_TIMEOUT_SECONDS` — optional per-request timeout, default `25`.
 
-The LLM path posts structured-output requests to `<LLM_BASE_URL>/responses`. Missing configuration, network failures, non-success responses, and invalid model output produce a `failed` job with a clear error; they do not crash the service. No secrets belong in the repository.
+The LLM path posts structured-output requests to Gemini's `generateContent` endpoint. Missing configuration, network failures, non-success responses, and invalid model output produce a `failed` job with a clear error; they do not crash the service. No secrets belong in the repository.
 
 ## Tests
 
